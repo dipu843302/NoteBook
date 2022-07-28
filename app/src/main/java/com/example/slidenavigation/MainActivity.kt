@@ -5,8 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.CubicBezierEasing
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
@@ -65,7 +64,7 @@ class MainActivity : ComponentActivity() {
         val myColorString = "#F7F097"
         val myComposeColorInt = Color(myColorString.toColorInt())
     }
-    val tweenSpec = tween<IntOffset>(durationMillis = 2000, easing = CubicBezierEasing(0.08f,0.93f,0.68f,1.27f))
+    val tweenSpec = tween<IntOffset>(durationMillis = 500, easing = FastOutSlowInEasing)
 
     @OptIn(ExperimentalAnimationApi::class)
     @Composable
@@ -74,16 +73,16 @@ class MainActivity : ComponentActivity() {
         AnimatedNavHost(navController = navController, startDestination="splash_screen"){
             composable( "home_screen",
                 enterTransition = { initial, _ ->
-                    slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tweenSpec)
+                    slideInHorizontally(initialOffsetX = { 300 }, animationSpec = tweenSpec)
                 },
                 exitTransition = { _, target ->
-                    slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tweenSpec)
+                    slideOutHorizontally(targetOffsetX = { -300 }, animationSpec = tweenSpec)
                 },
                 popEnterTransition = { initial, _ ->
-                    slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tweenSpec)
+                    slideInHorizontally(initialOffsetX = { -300 }, animationSpec = tweenSpec)
                 },
                 popExitTransition = { _, target ->
-                    slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tweenSpec)
+                    slideOutHorizontally(targetOffsetX = { 300 }, animationSpec = tweenSpec)
                 }
             ){
                 HomeScreen(navController)
