@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +38,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
 import com.example.notebook.mvvm.NoteViewModel
 import com.example.notebook.room.Note
-import com.example.slidenavigation.ui.theme.SlideNavigationTheme
 import com.example.slidenavigation.ui_compose.AddNotes
 import com.example.slidenavigation.ui_compose.SplashScreen
 import com.example.slidenavigation.ui_compose.UpdateNote
@@ -61,7 +59,7 @@ class MainActivity : ComponentActivity() {
         }
     }
     companion object {
-        val myColorString = "#F7F097"
+        const val myColorString = "#F7F097"
         val myComposeColorInt = Color(myColorString.toColorInt())
     }
     val tweenSpec = tween<IntOffset>(durationMillis = 500, easing = FastOutSlowInEasing)
@@ -124,8 +122,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-
     @Composable
     fun HomeScreen(navController: NavHostController) {
 
@@ -182,7 +178,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 
     @Composable
     fun SetRecyclerView(navController: NavHostController) {
@@ -261,10 +256,7 @@ class MainActivity : ComponentActivity() {
                                 .show()
                         }
                 )
-
             }
-
         }
     }
 }
-

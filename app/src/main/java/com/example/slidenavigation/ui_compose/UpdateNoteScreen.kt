@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.util.Log
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -119,13 +120,13 @@ fun UpdateNote(viewModel: NoteViewModel, navController: NavHostController,note:N
                         .clickable {
                             if (title.isNotEmpty() && message.isNotEmpty() && mDate.isNotEmpty()) {
                                 val note2 = Note(title, message, mDate)
-                                note2.id=note.id
+                                note2.id = note.id
                                 viewModel.updateNote(note2)
                                 Toast
                                     .makeText(context, "Data updated", Toast.LENGTH_SHORT)
                                     .show()
                                 navController.navigate("home_screen")
-                            }else{
+                            } else {
                                 Toast
                                     .makeText(context, "Fill the credentials", Toast.LENGTH_SHORT)
                                     .show()
