@@ -1,13 +1,14 @@
-package com.example.notebook.room
+package com.example.slidenavigation.room
 
 import androidx.room.*
+import com.example.slidenavigation.room.Note
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NotesDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(note:Note)
+    suspend fun insert(note: Note)
 
     @Update
     suspend fun update(note: Note)

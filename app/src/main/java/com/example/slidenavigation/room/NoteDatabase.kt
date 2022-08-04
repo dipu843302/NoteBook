@@ -1,4 +1,4 @@
-package com.example.notebook.room
+package com.example.slidenavigation.room
 
 import android.content.Context
 import androidx.room.Database
@@ -12,16 +12,16 @@ abstract class NoteDatabase:RoomDatabase() {
 
     companion object{
         @Volatile
-        private var INSTANCE:NoteDatabase?=null
+        private var INSTANCE: NoteDatabase?=null
 
-        fun getDatabase(context: Context):NoteDatabase{
-            return INSTANCE?: synchronized(this){
+        fun getDatabase(context: Context): NoteDatabase {
+            return INSTANCE ?: synchronized(this){
               val instance= Room.databaseBuilder(
                   context.applicationContext,
                   NoteDatabase::class.java,
                   "note_database"
               ).build()
-                INSTANCE=instance
+                INSTANCE =instance
                 instance
             }
         }
