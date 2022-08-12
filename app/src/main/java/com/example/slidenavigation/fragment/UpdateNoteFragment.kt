@@ -35,6 +35,10 @@ import com.example.slidenavigation.mvvm.NoteViewModel
 import com.example.slidenavigation.room.Note
 import com.example.slidenavigation.MainActivity
 import com.example.slidenavigation.R
+import com.example.slidenavigation.mvvm.NoteRepository
+import com.example.slidenavigation.mvvm.NoteViewModelFactory
+import com.example.slidenavigation.room.NoteDatabase
+import com.example.slidenavigation.room.NotesDao
 import java.util.*
 
 
@@ -42,31 +46,37 @@ class UpdateNoteFragment : Fragment() {
 
     private val args: UpdateNoteFragmentArgs by navArgs()
 
-    private lateinit var noteViewModel: NoteViewModel
+    private lateinit var viewModel: NoteViewModel
+    private lateinit var repository: NoteRepository
+    private lateinit var noteDao: NotesDao
+    private lateinit var noteDatabase: NoteDatabase
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
+        noteDatabase= NoteDatabase.getDatabase(requireContext())
+        noteDao=noteDatabase.getNotesDao()
+        repository= NoteRepository(noteDao)
+        val viewModelFactoryTest= NoteViewModelFactory(repository)
+        viewModel= ViewModelProvider(this, viewModelFactoryTest)[NoteViewModel::class.java]
+
         val notes = args.updateNote
 
 
-        noteViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[NoteViewModel::class.java]
 
         return ComposeView(requireContext()).apply {
             setContent {
-                UpdateNote(viewModel = noteViewModel, notes)
+                UpdateNote(viewModel = viewModel, notes)
             }
         }
     }
 
     @Composable
     fun UpdateNote(viewModel: NoteViewModel, note: Note) {
-        var title by remember { mutableStateOf(note.noteTitle) }
-        var message by remember { mutableStateOf(note.noteDescription) }
+        var title2 by remember { mutableStateOf(note.noteTitle) }
+        var message2 by remember { mutableStateOf(note.noteDescription) }
 
         // Fetching the Local Context
         val mContext = LocalContext.current
@@ -89,14 +99,14 @@ class UpdateNoteFragment : Fragment() {
 
         // Declaring a string value to
         // store date in string format
-        var mDate by remember { mutableStateOf(note.dateAdded) }
+        var mDate2 by remember { mutableStateOf(note.dateAdded) }
 
         // Declaring DatePickerDialog and setting
         // initial values as current values (present year, month and day)
         val mDatePickerDialog = DatePickerDialog(
             mContext,
             { _: DatePicker, mYear: Int, mMonth: Int, mDayOfMonth: Int ->
-                mDate = "$mDayOfMonth/${mMonth + 1}/$mYear"
+                mDate2 = "$mDayOfMonth/${mMonth + 1}/$mYear"
             }, mYear, mMonth, mDay
         )
         Scaffold {
@@ -148,8 +158,8 @@ class UpdateNoteFragment : Fragment() {
                             .size(35.dp)
                             .padding(end = 10.dp)
                             .clickable {
-                                if (title.isNotEmpty() && message.isNotEmpty() && mDate.isNotEmpty()) {
-                                    val note2 = Note(title, message, mDate)
+                                if (title2.isNotEmpty() && message2.isNotEmpty() && mDate2.isNotEmpty()) {
+                                    val note2 = Note(title2, message2, mDate2)
                                     note2.id = note.id
                                     viewModel.updateNote(note2)
                                     Toast
@@ -171,9 +181,9 @@ class UpdateNoteFragment : Fragment() {
                 }
 
                 TextField(
-                    value = title,
+                    value = title2,
                     onValueChange = {
-                        title = it
+                        title2 = it
                     },
                     placeholder = { Text(text = "Title") },
                     modifier = Modifier.fillMaxWidth(),
@@ -191,7 +201,7 @@ class UpdateNoteFragment : Fragment() {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Selected Date: $mDate",
+                        text = "Selected Date: $mDate2",
                         fontSize = 15.sp,
                         textAlign = TextAlign.Start,
                         modifier = Modifier.padding(start = 15.dp)
@@ -210,8 +220,8 @@ class UpdateNoteFragment : Fragment() {
                 }
 
                 TextField(
-                    value = message, onValueChange = {
-                        message = it
+                    value = message2, onValueChange = {
+                        message2 = it
                     },
                     placeholder = { Text(text = "Description") },
                     modifier = Modifier

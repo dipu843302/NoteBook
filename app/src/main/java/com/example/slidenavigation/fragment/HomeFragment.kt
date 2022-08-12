@@ -38,18 +38,30 @@ import com.example.slidenavigation.mvvm.NoteViewModel
 import com.example.slidenavigation.room.Note
 import com.example.slidenavigation.MainActivity.Companion.myComposeColorInt
 import com.example.slidenavigation.R
+import com.example.slidenavigation.mvvm.NoteRepository
+import com.example.slidenavigation.room.NoteDatabase
+import com.example.slidenavigation.room.NotesDao
+import com.example.slidenavigation.mvvm.NoteViewModelFactory
 
 class HomeFragment : Fragment() {
     var noteChange: Note? = null
-    private lateinit var noteViewModel: NoteViewModel
+
+
+    private lateinit var viewModel: NoteViewModel
+    private lateinit var repository: NoteRepository
+    private lateinit var noteDao: NotesDao
+    private lateinit var noteDatabase: NoteDatabase
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        noteViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[NoteViewModel::class.java]
+        noteDatabase= NoteDatabase.getDatabase(requireContext())
+        noteDao=noteDatabase.getNotesDao()
+        repository= NoteRepository(noteDao)
+        val viewModelFactoryTest= NoteViewModelFactory(repository)
+        viewModel= ViewModelProvider(this, viewModelFactoryTest)[NoteViewModel::class.java]
+
         return ComposeView(requireContext()).apply {
             setContent {
                 HomeScreen()
@@ -116,7 +128,7 @@ class HomeFragment : Fragment() {
     @Composable
     fun SetRecyclerView() {
 
-        val dataList: List<Note> by noteViewModel.allNote.collectAsState(initial = emptyList())
+        val dataList: List<Note> by viewModel.allNote.collectAsState(initial = emptyList())
         LazyColumn {
             items(dataList) {
                 DataLayout(note = it)
@@ -151,10 +163,14 @@ class HomeFragment : Fragment() {
                             .size(40.dp)
                             .clickable {
                                 noteChange = note
-                                val notes = Note(note.noteTitle, note.noteDescription, note.dateAdded)
-                            val action =
-                               HomeFragmentDirections.actionHomeFragmentToUpdateNoteFragment(notes)
-                            findNavController().navigate(action)
+                                var notes =
+                                    Note(note.noteTitle, note.noteDescription, note.dateAdded)
+                                notes.id = note.id
+                                val action =
+                                    HomeFragmentDirections.actionHomeFragmentToUpdateNoteFragment(
+                                        notes
+                                    )
+                                findNavController().navigate(action)
                             }
                     )
                 }
@@ -164,7 +180,7 @@ class HomeFragment : Fragment() {
                         .clickable {
                             val notes = Note(note.noteTitle, note.noteDescription, note.dateAdded)
                             val action =
-                               HomeFragmentDirections.actionHomeFragmentToViewFragment(notes)
+                                HomeFragmentDirections.actionHomeFragmentToViewFragment(notes)
                             findNavController().navigate(action)
                         },
                     horizontalAlignment = Alignment.Start
@@ -194,7 +210,7 @@ class HomeFragment : Fragment() {
                     modifier = Modifier
                         .size(25.dp)
                         .clickable {
-                            noteViewModel.deleteNote(note)
+                            viewModel.deleteNote(note)
                             Toast
                                 .makeText(mContext, "Deleted", Toast.LENGTH_SHORT)
                                 .show()

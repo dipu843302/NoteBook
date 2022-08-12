@@ -31,7 +31,6 @@ import com.example.slidenavigation.room.Note
 import com.example.slidenavigation.MainActivity.Companion.myComposeColorInt
 import com.example.slidenavigation.R
 
-
 class ViewFragment : Fragment() {
     private val args: ViewFragmentArgs by navArgs()
     override fun onCreateView(

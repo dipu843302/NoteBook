@@ -32,22 +32,34 @@ import com.example.slidenavigation.mvvm.NoteViewModel
 import com.example.slidenavigation.room.Note
 import com.example.slidenavigation.MainActivity
 import com.example.slidenavigation.R
+import com.example.slidenavigation.mvvm.NoteRepository
+import com.example.slidenavigation.room.NoteDatabase
+import com.example.slidenavigation.room.NotesDao
+import com.example.slidenavigation.mvvm.NoteViewModelFactory
 import java.util.*
 
 
 class AddNoteFragment : Fragment() {
-    private lateinit var noteViewModel: NoteViewModel
+
+    private lateinit var viewModel: NoteViewModel
+    private lateinit var repository: NoteRepository
+    private lateinit var noteDao: NotesDao
+    private lateinit var noteDatabase: NoteDatabase
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        noteViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.AndroidViewModelFactory.getInstance(requireActivity().application)
-        )[NoteViewModel::class.java]
+
+        noteDatabase= NoteDatabase.getDatabase(requireContext())
+        noteDao=noteDatabase.getNotesDao()
+        repository= NoteRepository(noteDao)
+        val viewModelFactoryTest= NoteViewModelFactory(repository)
+        viewModel= ViewModelProvider(this, viewModelFactoryTest)[NoteViewModel::class.java]
+
         return ComposeView(requireContext()).apply {
             setContent {
-                AddNotes(viewModel = noteViewModel)
+                AddNotes(viewModel = viewModel)
             }
         }
     }
